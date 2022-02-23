@@ -4,10 +4,14 @@
 
   <div class="painel">
 
-    <h2 class="painel-titulo">{{ titulo }}</h2>
-    <slot class="painel-conteudo">
-      <!--A tag slot aceita que, em App.vue, eu coloque conteúdo dentro do Painel-->
-    </slot>
+    <h2 class="painel-titulo" @dblclick = "visivel = !visivel">{{ titulo }}</h2> <!-- @ é o mesmo que v-on, só que mais elegante -->
+    <transition name="painel-fade"> <!-- transition só pode ter 1 elemento filho. Ele adiciona classes no elemento. As classes levam em cosideração o "name". São elas (geradas automaticamente pelo Vue.js): "name"-enter, "name"-enter-active e "name"-leave-active -->
+    <div  class="painel-conteudo" v-show="visivel"> <!-- v-show dá display:none se for false e mostra o conteúdo se for true. V-SHOW NÃO PODE SER USADO DIRETAMENTE NO SLOT. COLOQUE UMA DIV EM TORNO DELE! -->
+      <slot>
+        <!--A tag slot aceita que, em App.vue, eu coloque conteúdo dentro do Painel-->
+      </slot>
+    </div>
+    </transition>
   </div>
 
 </template>
@@ -15,7 +19,17 @@
 <script>
 
 export default {
-   props: ['titulo']
+   props: ['titulo'],
+
+   data() {
+     
+     return {
+
+       visivel: true
+
+     }
+
+   }
 }
 </script>
 
@@ -41,8 +55,18 @@ export default {
     text-transform: uppercase;
   }
 
+
   *{
     box-shadow: 5px 5px 5px black;
+  }
+
+
+  .painel-fade-enter, .painel-fade-leave-active {
+    opacity: 0;
+  }
+
+  .painel-fade-enter-active, .painel-fade-leave-active{
+    transition: opacity 0.4s;
   }
 
 </style>

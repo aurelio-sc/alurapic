@@ -2,8 +2,9 @@
   <div class="corpo">
     <h1 class="centralizado">{{titulo}}</h1>
 
+    <input type="search" class="filtro" v-on:input="filtro = $event.target.value" placeholder="filtre por parte do filto"> <!-- "v-on:input" no envento input executa o código: pega o valor (value) de quem disparou o evento (target, que é o input) -->
     <ul class="lista-fotos">
-      <li class="lista-fotos-item" v-for="foto of fotos" :key="foto.id">
+      <li class="lista-fotos-item" v-for="foto of fotosComFiltro" :key="foto.id">
        
         <meu-painel :titulo="foto.titulo">
           <img class="imagem-responsiva" :src="foto.url" :alt="foto.titulo"> <!-- Inserida dentro da tag slot, presente em Painel.vue -->
@@ -29,9 +30,23 @@ export default {
   data () {
     return {
       titulo: 'Alurapic',
-      fotos:[]
+      fotos:[],
+      filtro: ''
 
     }
+  },
+
+  computed:{ /* as computed properties são métodos que são acessados como propriedades na vue*/
+
+    fotosComFiltro(){
+      if (this.filtro) {
+        let exp = new RegExp(this.filtro.trim(), 'i'); /* Cria uma expressão regular com o que você digitou no filtro. O "i" é insensitive, para não importar se a busca é em maiúsculo ou minúsculo */
+        return this.fotos.filter(foto => exp.test(foto.titulo)); /* .filter é uma função do JS que filtra a lista. foto é o nome dado ao item iterado. exp.test vai testar se foto.titulo tem o que foi digitado */
+      } else {
+        return this.fotos;
+      }
+    }
+
   },
 
   created() { //essa função é executada assim que a página carrega. É o início do ciclo de vida do componente.
@@ -67,4 +82,10 @@ export default {
     width: 100%;
   }
 
+  .filtro{
+    display: block;
+    width: 100%;
+  }
+
 </style>
+
